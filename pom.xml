@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>RandomLootChest</artifactId>
-    <version>3.4.1.1</version>
+    <version>3.4.1.2</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -114,7 +114,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.cryptomorin.xseries</pattern>
-                                    <shadedPattern>your.plugin.package.shaded.xseries</shadedPattern>
+                                    <shadedPattern>me.Herzchen.RandomLootChest.libs.xseries</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

@@ -14,7 +14,7 @@ general:
   no_permission_general: "<red>Không đủ quyền hạn."
   player_only: "<red>Chỉ người chơi được dùng"
   unknown_command: "<red>Lệnh không tồn tại! Sử dụng <yellow>/rlc <red>để xem trợ giúp."
-  chest_type_not_found: "<red>Không tìm thấy loại rương '<yellow>{loai}<red>'!"
+  chest_type_not_found: "<red>Không tìm thấy loại rương <yellow>{loai}<red>!"
 
 # ===================== Message rương / loot =====================
 chest:
@@ -92,7 +92,7 @@ command:
 
   # --- addchest ---
   addchest_select_no_region: "<red>Vui lòng chọn vùng bằng wand!"
-  addchest_set_count: "<green>Đã set {so_luong} rương loại '<yellow>{loai}<green>'!"
+  addchest_set_count: "<green>Đã set {so_luong} rương loại <yellow>{loai}<green>!"
   addchest_set_count_no_type: "<green>Đã set {so_luong} rương!"
   addchest_already: "<yellow>{so_luong} đã là RLC chest!"
   addchest_all_already: "<yellow>Tất cả {so_luong} rương đã là RLC chest!"
@@ -117,8 +117,8 @@ command:
 
   # --- addchest / addchesttype ---
   addchest_wait_started: "<green>Đang chờ bạn chọn rương..."
-  addchesttype_exists: "<red>Loại rương '<yellow>{loai}<red>' đã tồn tại!"
-  addchesttype_created: "<green>Đã thêm loại rương '<yellow>{loai}<green>'! Chỉnh sửa trong chesttypes.yml để cấu hình chi tiết."
+  addchesttype_exists: "<red>Loại rương <yellow>{loai}<red> đã tồn tại!"
+  addchesttype_created: "<green>Đã thêm loại rương <yellow>{loai}<green>! Chỉnh sửa trong chesttypes.yml để cấu hình chi tiết."
 
   # --- chesttypes (danh sách) ---
   chesttypes_header: "<dark_red>*-----<gold>Loại Rương</gold><dark_red>*-----*"
@@ -141,13 +141,13 @@ command:
   # --- delchesttype ---
   delchesttype_usage: "<red>Sử dụng: <yellow>/rlc delchesttype <italic>loại</italic>"
   delchesttype_cannot_default: "<red>Không thể xóa loại rương mặc định!"
-  delchesttype_done: "<green>Đã xóa loại rương '<yellow>{loai}<green>'!"
+  delchesttype_done: "<green>Đã xóa loại rương <yellow>{loai}<green>!"
 
   # --- resettimer ---
   resettimer_usage: "<red>Sử dụng: <yellow>/rlc resettimer [random/fixedchest] <italic>loại</italic>"
-  resettimer_done: "<green>Đã reset timer cho {random} rương ngẫu nhiên và {fixed} rương cố định loại '<yellow>{loai}<green>'!"
-  resettimer_done_random: "<green>Đã reset timer cho {random} rương ngẫu nhiên loại '<yellow>{loai}<green>'!"
-  resettimer_done_fixed: "<green>Đã reset timer cho {fixed} rương cố định loại '<yellow>{loai}<green>'!"
+  resettimer_done: "<green>Đã reset timer cho {random} rương ngẫu nhiên và {fixed} rương cố định loại <yellow>{loai}<green>!"
+  resettimer_done_random: "<green>Đã reset timer cho {random} rương ngẫu nhiên loại <yellow>{loai}<green>!"
+  resettimer_done_fixed: "<green>Đã reset timer cho {fixed} rương cố định loại <yellow>{loai}<green>!"
 
   # --- reload ---
   reload_done: "<green>Đã reload config, chest types và database!"
@@ -155,14 +155,14 @@ command:
   # --- spawn ---
   spawn_usage: "<red>Sử dụng: <yellow>/rlc spawn <italic>loại</italic> <italic>x1,y1,z1</italic> <italic>x2,y2,z2</italic> [world] [số lượng]"
   spawn_bad_coords: "<red>Tọa độ không hợp lệ! Định dạng: x,y,z"
-  spawn_world_not_found: "<red>Không tìm thấy world '<yellow>{ten}<red>'!"
+  spawn_world_not_found: "<red>Không tìm thấy world <yellow>{ten}<red>!"
   spawn_console_needs_world: "<red>Console cần chỉ định world!"
-  spawn_done: "<green>Đã spawn {da_spawn}/{yeu_cau} rương loại '<yellow>{loai}<green>'!"
+  spawn_done: "<green>Đã spawn {da_spawn}/{yeu_cau} rương loại <yellow>{loai}<green>!"
 
   # --- spawnregion ---
   spawnregion_usage: "<red>Sử dụng: <yellow>/rlc spawnregion <italic>loại</italic> <italic>regionId</italic> [số lượng]"
-  spawnregion_not_found: "<red>Không tìm thấy region '<yellow>{ten}<red>'!"
-  spawnregion_done: "<green>Đã spawn {da_spawn}/{yeu_cau} rương loại '<yellow>{loai}<green>' trong region '<yellow>{region}<green>'!"
+  spawnregion_not_found: "<red>Không tìm thấy region <yellow>{ten}<red>!"
+  spawnregion_done: "<green>Đã spawn {da_spawn}/{yeu_cau} rương loại <yellow>{loai}<green> trong region <yellow>{region}<green>!"
 
   # --- loottable ---
   loottable_usage: "<red>Sử dụng: <yellow>/rlc loottable <italic>loại</italic>"

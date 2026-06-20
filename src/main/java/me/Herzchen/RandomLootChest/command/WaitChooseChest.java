@@ -22,7 +22,7 @@ public class WaitChooseChest extends BukkitRunnable {
         Left = 5;
         Main.pl.addChestplayers.put(player, this);
         MessageUtil.send(player, Main.pl.messages.getFormatted("wait.countdown",
-                "<green>Bạn còn <white>{giay} <green>giây để nhấn chuột phải vào rương <white>=O", "{giay}", String.valueOf(Left)));
+                "{giay}", String.valueOf(Left)));
         runTaskTimer(Main.pl, 20L, 20L);
     }
 
@@ -33,7 +33,7 @@ public class WaitChooseChest extends BukkitRunnable {
     public void run() {
         if (Player.isOnline()) {
             MessageUtil.send(Player, Main.pl.messages.getFormatted("wait.countdown",
-                    "<green>Bạn còn <white>{giay} <green>giây để nhấn chuột phải vào rương <white>=O", "{giay}", String.valueOf(Left)));
+                    "{giay}", String.valueOf(Left)));
         }
         if (Left-- < 0) {
             MessageUtil.send(Player, Main.pl.messages.get("wait.timeout", "<red>Hết thời gian. Bạn đã quá chậm <white>=("));

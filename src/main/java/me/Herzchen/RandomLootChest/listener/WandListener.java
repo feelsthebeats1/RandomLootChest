@@ -39,10 +39,10 @@ public class WandListener implements Listener {
         Selection sel = Selection.selections.getOrDefault(player.getUniqueId(), new Selection());
         if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
             sel.pos1 = clickedBlock.getLocation();
-            MessageUtil.send(player, Main.pl.messages.getFormatted("wand.pos1_set", "<green>Đã đặt pos1 tại: <white>{loc}", "{loc}", RLCUtils.formatLocation(sel.pos1)));
+            MessageUtil.send(player, Main.pl.messages.getFormatted("wand.pos1_set", "{loc}", RLCUtils.formatLocation(sel.pos1)));
         } else if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             sel.pos2 = clickedBlock.getLocation();
-            MessageUtil.send(player, Main.pl.messages.getFormatted("wand.pos2_set", "<green>Đã đặt pos2 tại: <white>{loc}", "{loc}", RLCUtils.formatLocation(sel.pos2)));
+            MessageUtil.send(player, Main.pl.messages.getFormatted("wand.pos2_set", "{loc}", RLCUtils.formatLocation(sel.pos2)));
         } else {
             e.setCancelled(true); return;
         }

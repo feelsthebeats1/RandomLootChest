@@ -29,13 +29,14 @@ public class ConfigManager {
     public boolean loadConfig() {
         plugin.reloadConfig();
         FileConfiguration cfg = plugin.getConfig();
-        if (!checkConfig()) {
-            MessageUtil.sendConsole(plugin.messages.get("console.config_warning_line1"));
-            MessageUtil.sendConsole(plugin.messages.get("console.config_warning_line2"));
-            MessageUtil.sendConsole(plugin.messages.get("console.config_warning_line3"));
-            MessageUtil.sendConsole(plugin.messages.get("console.config_warning_line4"));
-            return false;
-        }
+
+        // Tự động thêm các key mặc định nếu thiếu (không block plugin)
+        cfg.options().copyDefaults(true);
+        plugin.saveConfig();
+        plugin.reloadConfig();
+        cfg = plugin.getConfig();
+
+        // Kiểm tra EnablePlugin
         if (!cfg.getBoolean("EnablePlugin")) {
             MessageUtil.sendConsole(plugin.messages.get("console.disabled_line1"));
             MessageUtil.sendConsole(plugin.messages.get("console.disabled_line2"));
@@ -107,22 +108,6 @@ public class ConfigManager {
             if (showError) plugin.getLogger().log(Level.WARNING, "Không tìm thấy hiệu ứng ''{0}''", s);
             return defaultValue;
         });
-    }
-
-    private boolean checkConfig() {
-        FileConfiguration cfg = plugin.getConfig();
-        Configuration org = cfg.getDefaults();
-        if (org == null) return false;
-        Set<String> cfgKeys = cfg.getKeys(true), orgKeys = org.getKeys(true);
-        if (orgKeys.stream().noneMatch(x -> !cfgKeys.contains(x)) &&
-            cfgKeys.stream().noneMatch(x -> !orgKeys.contains(x))) return true;
-        InputStream in = plugin.getResource("config.yml");
-        File outFile = new File(plugin.getDataFolder(), "config_example.yml");
-        try (FileOutputStream out = new FileOutputStream(outFile)) {
-            byte[] buf = new byte[1024]; int len;
-            while ((len = Objects.requireNonNull(in).read(buf)) > 0) out.write(buf, 0, len);
-        } catch (IOException e) { throw new RuntimeException("Lỗi lưu config mặc định", e); }
-        return false;
     }
 
     public void saveLegalConstants(String fileName, String enumName) {

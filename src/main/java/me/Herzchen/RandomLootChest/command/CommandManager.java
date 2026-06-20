@@ -60,7 +60,7 @@ public class CommandManager implements CommandExecutor {
             plugin.addChestplayers.remove(s);
         }
         if (s instanceof Player p && !p.hasPermission("randomlootchest.general")) {
-            MessageUtil.send(s, plugin.messages.get("general.no_permission_general", "<red>Không đủ quyền hạn.")); return false;
+            MessageUtil.send(s, plugin.messages.get("general.no_permission_general", "<red>Không đủ quyền hạn.")); return true;
         }
         if (args.length == 0) {
             if (s instanceof Player p) sendHelp(p); else sendConsoleHelp((ConsoleCommandSender) s);
@@ -131,7 +131,7 @@ public class CommandManager implements CommandExecutor {
             chestTypeId = a[1];
             if (!chestTypeId.equalsIgnoreCase("default") && ChestType.getChestType(chestTypeId) == null) {
                 MessageUtil.send(p, plugin.messages.getFormatted("general.chest_type_not_found",
-                        "<red>Không tìm thấy loại rương '<yellow>{loai}<red>'!", "{loai}", chestTypeId) + " <red>Sẽ dùng default.");
+                        "{loai}", chestTypeId) + " <red>Sẽ dùng default.");
                 chestTypeId = null;
             }
         }
@@ -154,14 +154,14 @@ public class CommandManager implements CommandExecutor {
                 }
         if (cnt > 0) {
             if (finalChestType != null) MessageUtil.send(p, plugin.messages.getFormatted("command.addchest_set_count",
-                    "<green>Đã set {so_luong} rương loại '<yellow>{loai}<green>'!", "{so_luong}", String.valueOf(cnt), "{loai}", finalChestType));
+                    "{so_luong}", String.valueOf(cnt), "{loai}", finalChestType));
             else MessageUtil.send(p, plugin.messages.getFormatted("command.addchest_set_count_no_type",
-                    "<green>Đã set {so_luong} rương!", "{so_luong}", String.valueOf(cnt)));
+                    "{so_luong}", String.valueOf(cnt)));
             if (already > 0) MessageUtil.send(p, plugin.messages.getFormatted("command.addchest_already",
-                    "<yellow>{so_luong} đã là RLC chest!", "{so_luong}", String.valueOf(already)));
+                    "{so_luong}", String.valueOf(already)));
         }
         else if (already > 0) MessageUtil.send(p, plugin.messages.getFormatted("command.addchest_all_already",
-                "<yellow>Tất cả {so_luong} rương đã là RLC chest!", "{so_luong}", String.valueOf(already)));
+                "{so_luong}", String.valueOf(already)));
         else MessageUtil.send(p, plugin.messages.get("command.addchest_none_found", "<yellow>Không tìm thấy rương nào!")); return true;
     }
 
@@ -179,8 +179,8 @@ public class CommandManager implements CommandExecutor {
                         if (plugin.FixedChests.containsKey(loc)) { plugin.FixedChests.remove(loc); cnt++; }
                         else notSet++;
                 }
-        if (cnt > 0) { MessageUtil.send(p, plugin.messages.getFormatted("command.unset_done", "<green>Đã unset {so_luong} RLC chest!", "{so_luong}", String.valueOf(cnt))); if (notSet > 0) MessageUtil.send(p, plugin.messages.getFormatted("command.unset_normal", "<yellow>{so_luong} rương thường", "{so_luong}", String.valueOf(notSet))); }
-        else if (notSet > 0) MessageUtil.send(p, plugin.messages.getFormatted("command.unset_none_with_normal", "<yellow>Không có RLC chest nào! ({so_luong} rương thường)", "{so_luong}", String.valueOf(notSet)));
+        if (cnt > 0) { MessageUtil.send(p, plugin.messages.getFormatted("command.unset_done", "{so_luong}", String.valueOf(cnt))); if (notSet > 0) MessageUtil.send(p, plugin.messages.getFormatted("command.unset_normal", "{so_luong}", String.valueOf(notSet))); }
+        else if (notSet > 0) MessageUtil.send(p, plugin.messages.getFormatted("command.unset_none_with_normal", "{so_luong}", String.valueOf(notSet)));
         else MessageUtil.send(p, plugin.messages.get("command.unset_none", "<yellow>Không tìm thấy rương nào!")); return true;
     }
 
@@ -215,7 +215,7 @@ public class CommandManager implements CommandExecutor {
             String ctName = a[1].toLowerCase();
             if (ChestType.getChestType(ctName) == null) {
                 MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found",
-                        "<red>Không tìm thấy loại rương '<yellow>{loai}<red>'!", "{loai}", ctName));
+                        "{loai}", ctName));
                 return true;
             }
             if (!(s instanceof Player p)) { MessageUtil.send(s, plugin.messages.get("general.player_only", "<red>Chỉ người chơi được dùng")); return true; }
@@ -236,7 +236,7 @@ public class CommandManager implements CommandExecutor {
             String ctName = a[1].toLowerCase();
             if (ChestType.getChestType(ctName) == null) {
                 MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found",
-                        "<red>Không tìm thấy loại rương '<yellow>{loai}<red>'!", "{loai}", ctName));
+                        "{loai}", ctName));
                 return true;
             }
             if (!(s instanceof Player p)) { MessageUtil.send(s, plugin.messages.get("general.player_only", "<red>Chỉ người chơi được dùng")); return true; }
@@ -254,7 +254,7 @@ public class CommandManager implements CommandExecutor {
             String ctName = a[1].toLowerCase();
             if (ChestType.getChestType(ctName) != null) {
                 MessageUtil.send(s, plugin.messages.getFormatted("command.addchesttype_exists",
-                        "<red>Loại rương '<yellow>{loai}<red>' đã tồn tại!", "{loai}", ctName));
+                        "{loai}", ctName));
                 return;
             }
 
@@ -274,7 +274,7 @@ public class CommandManager implements CommandExecutor {
 
             Main.pl.chestTypeConfig.loadChestTypes();
             MessageUtil.send(s, plugin.messages.getFormatted("command.addchesttype_created",
-                    "<green>Đã thêm loại rương '<yellow>{loai}<green>'! Chỉnh sửa trong chesttypes.yml để cấu hình chi tiết.", "{loai}", ctName));
+                    "{loai}", ctName));
         } else {
             if (!(s instanceof Player p)) { MessageUtil.send(s, plugin.messages.get("general.player_only", "<red>Chỉ người chơi được dùng")); return; }
             new WaitChooseChest().start(p, "add");
@@ -303,7 +303,7 @@ public class CommandManager implements CommandExecutor {
         MessageUtil.send(s, plugin.messages.get("command.chesttypes_header"));
         for (ChestType t : ChestType.getAllChestTypes().values())
             MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypes_line",
-                    "<red>- <gold>{loai} <gray>({vat_lieu})", "{loai}", t.getId(), "{vat_lieu}", t.getMaterial().name()));
+                    "{loai}", t.getId(), "{vat_lieu}", t.getMaterial().name()));
         MessageUtil.send(s, plugin.messages.get("command.chesttypes_footer")); return true;
     }
 
@@ -312,19 +312,19 @@ public class CommandManager implements CommandExecutor {
         if (s instanceof Player p && !p.hasPermission("randomlootchest.chesttypes")) { MessageUtil.send(s, plugin.messages.get("general.no_permission", "<red>Không đủ quyền.")); return true; }
         if (a.length < 2) { MessageUtil.send(s, plugin.messages.get("command.chesttypeinfo_usage", "<red>Sử dụng: <yellow>/rlc chesttypeinfo <italic>loại</italic>")); return true; }
         ChestType ct = ChestType.getChestType(a[1]);
-        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "<red>Không tìm thấy loại rương '<yellow>{loai}<red>'!", "{loai}", a[1])); return true; }
+        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "{loai}", a[1])); return true; }
 
-        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_header", "<dark_red>*-----<gold>{loai}</gold><dark_red>*-----*", "{loai}", ct.getId()));
-        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_name", "<gray>Tên: <white>{ten}", "{ten}", ct.getDisplayName()));
-        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_material", "<gray>Vật liệu: <white>{vat_lieu}", "{vat_lieu}", ct.getMaterial().name()));
-        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_spawn_time", "<gray>Thời gian spawn: <white>{min} - {max} giây", "{min}", String.valueOf(ct.getSpawnTimeMin()), "{max}", String.valueOf(ct.getSpawnTimeMax())));
-        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_kill_time", "<gray>Thời gian kill: <white>{thoi_gian} giây", "{thoi_gian}", String.valueOf(ct.getKillTime())));
-        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_spawn_effect", "<gray>Hiệu ứng spawn: <white>{gia_tri}", "{gia_tri}", String.valueOf(ct.getSpawnEffect())));
-        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_spawn_sound", "<gray>Âm thanh spawn: <white>{gia_tri}", "{gia_tri}", String.valueOf(ct.getSpawnSound())));
-        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_open_sound", "<gray>Âm thanh mở: <white>{gia_tri}", "{gia_tri}", String.valueOf(ct.getOpenSound())));
-        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_kill_effect", "<gray>Hiệu ứng kill: <white>{gia_tri}", "{gia_tri}", String.valueOf(ct.getKillEffect())));
-        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_kill_sound", "<gray>Âm thanh kill: <white>{gia_tri}", "{gia_tri}", String.valueOf(ct.getKillSound())));
-        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_loot_table", "<gray>Loot table riêng: <white>{gia_tri}", "{gia_tri}", ct.getLootTable() != null ? "Có" : "Không (dùng global)"));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_header", "{loai}", ct.getId()));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_name", "{ten}", ct.getDisplayName()));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_material", "{vat_lieu}", ct.getMaterial().name()));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_spawn_time", "{min}", String.valueOf(ct.getSpawnTimeMin()), "{max}", String.valueOf(ct.getSpawnTimeMax())));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_kill_time", "{thoi_gian}", String.valueOf(ct.getKillTime())));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_spawn_effect", "{gia_tri}", String.valueOf(ct.getSpawnEffect())));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_spawn_sound", "{gia_tri}", String.valueOf(ct.getSpawnSound())));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_open_sound", "{gia_tri}", String.valueOf(ct.getOpenSound())));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_kill_effect", "{gia_tri}", String.valueOf(ct.getKillEffect())));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_kill_sound", "{gia_tri}", String.valueOf(ct.getKillSound())));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.chesttypeinfo_loot_table", "{gia_tri}", ct.getLootTable() != null ? "Có" : "Không (dùng global)"));
         MessageUtil.send(s, plugin.messages.get("command.chesttypes_footer"));
         return true;
     }
@@ -335,14 +335,14 @@ public class CommandManager implements CommandExecutor {
         if (a.length < 2) { MessageUtil.send(s, plugin.messages.get("command.delchesttype_usage")); return true; }
         String ctName = a[1].toLowerCase();
         ChestType ct = ChestType.getChestType(ctName);
-        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "<red>Không tìm thấy loại rương '<yellow>{loai}<red>'!", "{loai}", ctName)); return true; }
+        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "{loai}", ctName)); return true; }
         if (ctName.equals("default")) { MessageUtil.send(s, plugin.messages.get("command.delchesttype_cannot_default")); return true; }
 
         org.bukkit.configuration.file.FileConfiguration chestConfig = Main.pl.chestTypeConfig.getConfig();
         chestConfig.set(ctName, null);
         Main.pl.chestTypeConfig.saveConfig();
         Main.pl.chestTypeConfig.loadChestTypes();
-        MessageUtil.send(s, plugin.messages.getFormatted("command.delchesttype_done", "<green>Đã xóa loại rương '<yellow>{loai}<green>'!", "{loai}", ctName));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.delchesttype_done", "{loai}", ctName));
         return true;
     }
 
@@ -361,7 +361,7 @@ public class CommandManager implements CommandExecutor {
         }
 
         ChestType ct = ChestType.getChestType(chestTypeArg);
-        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "<red>Không tìm thấy loại rương '<yellow>{loai}<red>'!", "{loai}", chestTypeArg)); return true; }
+        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "{loai}", chestTypeArg)); return true; }
 
         String chestTypeId = ct.getId();
         int randomCount = 0, fixedCount = 0;
@@ -381,15 +381,12 @@ public class CommandManager implements CommandExecutor {
 
         if (targetType == null) {
             MessageUtil.send(s, plugin.messages.getFormatted("command.resettimer_done",
-                    "<green>Đã reset timer cho {random} rương ngẫu nhiên và {fixed} rương cố định loại '<yellow>{loai}<green>'!",
                     "{random}", String.valueOf(randomCount), "{fixed}", String.valueOf(fixedCount), "{loai}", chestTypeId));
         } else if (targetType.equals("random")) {
             MessageUtil.send(s, plugin.messages.getFormatted("command.resettimer_done_random",
-                    "<green>Đã reset timer cho {random} rương ngẫu nhiên loại '<yellow>{loai}<green>'!",
                     "{random}", String.valueOf(randomCount), "{loai}", chestTypeId));
         } else {
             MessageUtil.send(s, plugin.messages.getFormatted("command.resettimer_done_fixed",
-                    "<green>Đã reset timer cho {fixed} rương cố định loại '<yellow>{loai}<green>'!",
                     "{fixed}", String.valueOf(fixedCount), "{loai}", chestTypeId));
         }
         return true;
@@ -415,7 +412,7 @@ public class CommandManager implements CommandExecutor {
                 plugin.getItemAdderGui().openGuiDirect(p, ctId.equalsIgnoreCase("global") ? null : ctId);
                 return true;
             }
-            MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "<red>Không tìm thấy loại rương '<yellow>{loai}<red>'!", "{loai}", ctId));
+            MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "{loai}", ctId));
             return true;
         }
         plugin.getItemAdderGui().openGui(p); return true;
@@ -431,14 +428,13 @@ public class CommandManager implements CommandExecutor {
         MessageUtil.send(s, plugin.messages.get("command.regions_header"));
         for (Region r : regions) {
             MessageUtil.send(s, plugin.messages.getFormatted("command.regions_line",
-                    "<red>- <gold>{region} <gray>({world}) <gray>[{x1},{y1},{z1} -> {x2},{y2},{z2}]",
                     "{region}", r.getId(), "{world}", r.getWorld().getName(),
                     "{x1}", String.valueOf(r.getXMin()), "{y1}", String.valueOf(r.getYMin()), "{z1}", String.valueOf(r.getZMin()),
                     "{x2}", String.valueOf(r.getXMax()), "{y2}", String.valueOf(r.getYMax()), "{z2}", String.valueOf(r.getZMax())));
             if (!r.getChestTypes().isEmpty()) {
                 StringBuilder types = new StringBuilder();
                 for (ChestType ct : r.getChestTypes()) types.append(ct.getId()).append(", ");
-                MessageUtil.send(s, plugin.messages.getFormatted("command.regions_types", "<gray>  Loại rương: <white>{cac_loai}", "{cac_loai}", types.substring(0, types.length() - 2)));
+                MessageUtil.send(s, plugin.messages.getFormatted("command.regions_types", "{cac_loai}", types.substring(0, types.length() - 2)));
             }
         }
         MessageUtil.send(s, plugin.messages.get("command.regions_footer")); return true;
@@ -452,7 +448,7 @@ public class CommandManager implements CommandExecutor {
             return true;
         }
         ChestType ct = ChestType.getChestType(a[1]);
-        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "<red>Không tìm thấy loại rương '<yellow>{loai}<red>'!", "{loai}", a[1])); return true; }
+        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "{loai}", a[1])); return true; }
 
         Location[] corners = parseCorners(a[2], a[3]);
         if (corners == null) { MessageUtil.send(s, plugin.messages.get("command.spawn_bad_coords")); return true; }
@@ -460,7 +456,7 @@ public class CommandManager implements CommandExecutor {
         World world;
         if (a.length >= 5 && !isInteger(a[4])) {
             world = RLCUtils.getWorld(a[4]);
-            if (world == null) { MessageUtil.send(s, plugin.messages.getFormatted("command.spawn_world_not_found", "<red>Không tìm thấy world '<yellow>{ten}<red>'!", "{ten}", a[4])); return true; }
+            if (world == null) { MessageUtil.send(s, plugin.messages.getFormatted("command.spawn_world_not_found", "{ten}", a[4])); return true; }
         } else {
             if (s instanceof Player p) world = p.getWorld();
             else { MessageUtil.send(s, plugin.messages.get("command.spawn_console_needs_world")); return true; }
@@ -494,7 +490,7 @@ public class CommandManager implements CommandExecutor {
             ct.playSpawnEffect(loc); ct.playSpawnSound(loc);
             spawned++;
         }
-        MessageUtil.send(s, plugin.messages.getFormatted("command.spawn_done", "<green>Đã spawn {da_spawn}/{yeu_cau} rương loại '<yellow>{loai}<green>'!",
+        MessageUtil.send(s, plugin.messages.getFormatted("command.spawn_done",
                 "{da_spawn}", String.valueOf(spawned), "{yeu_cau}", String.valueOf(amount), "{loai}", ct.getId()));
         return true;
     }
@@ -507,10 +503,10 @@ public class CommandManager implements CommandExecutor {
             return true;
         }
         ChestType ct = ChestType.getChestType(a[1]);
-        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "<red>Không tìm thấy loại rương '<yellow>{loai}<red>'!", "{loai}", a[1])); return true; }
+        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "{loai}", a[1])); return true; }
 
         Region region = RegionConfig.getInstance().getRegion(a[2]);
-        if (region == null) { MessageUtil.send(s, plugin.messages.getFormatted("command.spawnregion_not_found", "<red>Không tìm thấy region '<yellow>{ten}<red>'!", "{ten}", a[2])); return true; }
+        if (region == null) { MessageUtil.send(s, plugin.messages.getFormatted("command.spawnregion_not_found", "{ten}", a[2])); return true; }
 
         int amount = (a.length >= 4) ? parseInt(a[3]) : 1;
         amount = Math.max(1, Math.min(amount, 100));
@@ -532,7 +528,7 @@ public class CommandManager implements CommandExecutor {
             ct.playSpawnEffect(loc); ct.playSpawnSound(loc);
             spawned++;
         }
-        MessageUtil.send(s, plugin.messages.getFormatted("command.spawnregion_done", "<green>Đã spawn {da_spawn}/{yeu_cau} rương loại '<yellow>{loai}<green>' trong region '<yellow>{region}<green>'!",
+        MessageUtil.send(s, plugin.messages.getFormatted("command.spawnregion_done",
                 "{da_spawn}", String.valueOf(spawned), "{yeu_cau}", String.valueOf(amount), "{loai}", ct.getId(), "{region}", a[2]));
         return true;
     }
@@ -542,9 +538,9 @@ public class CommandManager implements CommandExecutor {
         if (s instanceof Player p && !p.hasPermission("randomlootchest.loottable")) { MessageUtil.send(s, plugin.messages.get("general.no_permission", "<red>Không đủ quyền.")); return true; }
         if (a.length < 2) { MessageUtil.send(s, plugin.messages.get("command.loottable_usage")); return true; }
         ChestType ct = ChestType.getChestType(a[1]);
-        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "<red>Không tìm thấy loại rương '<yellow>{loai}<red>'!", "{loai}", a[1])); return true; }
+        if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "{loai}", a[1])); return true; }
 
-        MessageUtil.send(s, plugin.messages.getFormatted("command.loottable_header", "<dark_red>*-----<gold>Items: {loai}</gold><dark_red>*-----*", "{loai}", ct.getId()));
+        MessageUtil.send(s, plugin.messages.getFormatted("command.loottable_header", "{loai}", ct.getId()));
         ConfigurationSection lootSec = ct.getLootTable();
         if (lootSec == null) {
             MessageUtil.send(s, plugin.messages.get("command.loottable_global_note", "<gray>Loại rương này dùng global items."));
@@ -555,7 +551,7 @@ public class CommandManager implements CommandExecutor {
                     if (itemSec != null) {
                         ItemStack item = itemSec.getItemStack("item");
                         int chance = itemSec.getInt("chance", 0);
-                        if (item != null) MessageUtil.send(s, plugin.messages.getFormatted("command.loottable_line", "<white>- {vat_lieu} x{so_luong} <gray>(Tỷ lệ: {ty_le})", "{vat_lieu}", item.getType().name(), "{so_luong}", String.valueOf(item.getAmount()), "{ty_le}", String.valueOf(chance)));
+                        if (item != null) MessageUtil.send(s, plugin.messages.getFormatted("command.loottable_line", "{vat_lieu}", item.getType().name(), "{so_luong}", String.valueOf(item.getAmount()), "{ty_le}", String.valueOf(chance)));
                     }
                 }
             }
@@ -565,7 +561,7 @@ public class CommandManager implements CommandExecutor {
                 if (itemSec != null) {
                     ItemStack item = itemSec.getItemStack("item");
                     int chance = itemSec.getInt("chance", 0);
-                    if (item != null) MessageUtil.send(s, plugin.messages.getFormatted("command.loottable_line", "<white>- {vat_lieu} x{so_luong} <gray>(Tỷ lệ: {ty_le})", "{vat_lieu}", item.getType().name(), "{so_luong}", String.valueOf(item.getAmount()), "{ty_le}", String.valueOf(chance)));
+                    if (item != null) MessageUtil.send(s, plugin.messages.getFormatted("command.loottable_line", "{vat_lieu}", item.getType().name(), "{so_luong}", String.valueOf(item.getAmount()), "{ty_le}", String.valueOf(chance)));
                 }
             }
         }

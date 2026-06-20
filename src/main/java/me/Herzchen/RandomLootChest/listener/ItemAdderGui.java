@@ -155,7 +155,7 @@ public class ItemAdderGui implements Listener {
                     .asGuiItem(event -> {
                         event.setCancelled(true);
                         editingChestType.put(player, ctId);
-                        MessageUtil.send(player, Main.pl.messages.getFormatted("gui.selected_type", "<green>Đã chọn: <white>{ten}", "{ten}", ct.getDisplayName()));
+                        MessageUtil.send(player, Main.pl.messages.getFormatted("gui.selected_type", "{ten}", ct.getDisplayName()));
                         player.closeInventory();
                         loadItems(ctId);
                         openPage(player, 1);
@@ -343,7 +343,7 @@ public class ItemAdderGui implements Listener {
                                         MessageUtil.send(player, Main.pl.messages.get("gui.chance_out_of_range", "<red>Tỷ lệ phải từ 1 đến 100!"));
                                     } else {
                                         Main.pl.chances.put(finalId, val);
-                                        MessageUtil.send(player, Main.pl.messages.getFormatted("gui.chance_set", "<green>Đã đặt tỷ lệ thành: <white>{ty_le}", "{ty_le}", String.valueOf(val)));
+                                        MessageUtil.send(player, Main.pl.messages.getFormatted("gui.chance_set", "{ty_le}", String.valueOf(val)));
                                     }
                                 } catch (NumberFormatException e) {
                                     MessageUtil.send(player, Main.pl.messages.get("gui.chance_invalid_number", "<red>Số không hợp lệ! Vui lòng nhập lại."));
