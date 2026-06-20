@@ -27,7 +27,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.Chest;
 
 import java.util.*;
 import java.util.Collection;
@@ -54,12 +53,12 @@ public class CommandManager implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender s, Command c, String a, String[] args) {
+        if (!c.getName().equalsIgnoreCase("rlc")) return false;
         if (plugin.addChestplayers.containsKey(s)) {
             MessageUtil.send(s, plugin.messages.get("wait.cancelled", "<red>Đã hủy <gray>fo_O"));
             plugin.addChestplayers.get(s).cancel();
             plugin.addChestplayers.remove(s);
         }
-        if (!c.getName().equalsIgnoreCase("rlc")) return false;
         if (s instanceof Player p && !p.hasPermission("randomlootchest.general")) {
             MessageUtil.send(s, plugin.messages.get("general.no_permission_general", "<red>Không đủ quyền hạn.")); return false;
         }
@@ -487,7 +486,10 @@ public class CommandManager implements CommandExecutor {
             plugin.RandomChests.put(loc, info);
             loc.getBlock().setType(ct.getMaterial());
             BlockState state = loc.getBlock().getState();
-            state.setData(new Chest(BlockFace.values()[FindAvaliableLocation.getRandom(0, 3)]));
+            if (state.getBlockData() instanceof org.bukkit.block.data.type.Chest chestData) {
+                chestData.setFacing(BlockFace.values()[FindAvaliableLocation.getRandom(0, 3)]);
+                state.setBlockData(chestData);
+            }
             state.update();
             ct.playSpawnEffect(loc); ct.playSpawnSound(loc);
             spawned++;
@@ -522,7 +524,10 @@ public class CommandManager implements CommandExecutor {
             plugin.RandomChests.put(loc, info);
             loc.getBlock().setType(ct.getMaterial());
             BlockState state = loc.getBlock().getState();
-            state.setData(new Chest(BlockFace.values()[FindAvaliableLocation.getRandom(0, 3)]));
+            if (state.getBlockData() instanceof org.bukkit.block.data.type.Chest chestData) {
+                chestData.setFacing(BlockFace.values()[FindAvaliableLocation.getRandom(0, 3)]);
+                state.setBlockData(chestData);
+            }
             state.update();
             ct.playSpawnEffect(loc); ct.playSpawnSound(loc);
             spawned++;

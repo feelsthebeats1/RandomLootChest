@@ -24,6 +24,13 @@ permissions:
       randomlootchest.chesttypes: true
       randomlootchest.resettimer: true
       randomlootchest.reload: true
+      randomlootchest.regions: true
+      randomlootchest.spawn: true
+      randomlootchest.spawnregion: true
+      randomlootchest.loottable: true
+      randomlootchest.command.wand: true
+      randomlootchest.command.set: true
+      randomlootchest.command.unset: true
 
   randomlootchest.general:
     description: Access to general commands
@@ -53,6 +60,20 @@ permissions:
     description: Access to resettimer command
   randomlootchest.reload:
     description: Access to reload command
+  randomlootchest.regions:
+    description: Access to regions command
+  randomlootchest.spawn:
+    description: Access to spawn command
+  randomlootchest.spawnregion:
+    description: Access to spawnregion command
+  randomlootchest.loottable:
+    description: Access to loottable command
+  randomlootchest.command.wand:
+    description: Access to use wand command
+  randomlootchest.command.set:
+    description: Access to set command
+  randomlootchest.command.unset:
+    description: Access to unset command
 
 commands:
   rlc:
