@@ -21,6 +21,9 @@ permissions:
       randomlootchest.wand: true
       randomlootchest.set: true
       randomlootchest.unset: true
+      randomlootchest.chesttypes: true
+      randomlootchest.resettimer: true
+      randomlootchest.reload: true
 
   randomlootchest.general:
     description: Access to general commands
@@ -44,6 +47,12 @@ permissions:
     description: Access to set command
   randomlootchest.unset:
     description: Access to unset command
+  randomlootchest.chesttypes:
+    description: Access to chesttypes command
+  randomlootchest.resettimer:
+    description: Access to resettimer command
+  randomlootchest.reload:
+    description: Access to reload command
 
 commands:
   rlc:

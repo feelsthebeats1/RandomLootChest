@@ -1,0 +1,43 @@
+# ========================================
+# Cấu hình loại rương (Chest Types)
+# ========================================
+# Mỗi loại rương có:
+# - material: Loại khối (CHEST, TRAPPED_CHEST, SHULKER_BOX...)
+# - displayName: Tên hiển thị
+# - spawnTimeMin/Max: Thời gian giữa các lần spawn (giây)
+# - killTime: Thời gian tồn tại (giây)
+# - spawnEffect: Hiệu ứng khi spawn
+# - spawnSound: Âm thanh khi spawn
+# - openSound: Âm thanh khi mở
+# - killEffect: Hiệu ứng khi biến mất
+# - killSound: Âm thanh khi biến mất
+# - lootTable: Đường dẫn đến loot table trong ItemDatabase (tùy chọn)
+#   Nếu để trống, sẽ dùng item global từ database.yml
+#
+# Các loại rương mặc định:
+# ========================================
+
+default:
+  material: CHEST
+  displayName: "Rương Mặc Định"
+  spawnTimeMin: 10
+  spawnTimeMax: 20
+  killTime: 60
+  spawnEffect: MOBSPAWNER_FLAMES
+  spawnSound: NONE
+  openSound: CHEST_OPEN|BLOCK_CHEST_OPEN
+  killEffect: EXPLOSION
+  killSound: DIG_GRASS|BLOCK_GRASS_BREAK
+
+dungeon:
+  material: TRAPPED_CHEST
+  displayName: "Rương Dungeon"
+  spawnTimeMin: 30
+  spawnTimeMax: 60
+  killTime: 120
+  spawnEffect: EXPLOSION
+  spawnSound: BLOCK_ANVIL_LAND
+  openSound: BLOCK_CHEST_OPEN
+  killEffect: EXPLOSION
+  killSound: BLOCK_ANVIL_BREAK
+  lootTable: ItemDatabase.dungeon
