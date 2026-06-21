@@ -102,25 +102,28 @@ public class Timer {
                }
             }
          }
-          for (Entry<Location, FixedChestInfo> e : Main.pl.FixedChests.entrySet()) {
-             FixedChestInfo info = e.getValue();
-             int k = info.Time - 1;
-             if (k > 0) info.Time = k;
-             else {
-                info.Time = Math.max(FindAvaliableLocation.getRandom(Main.pl.getFixedChestUpdateTimeMin(), Main.pl.getFixedChestUpdateTimeMax()), 0);
-                Block block = e.getKey().getBlock();
-                if (RLCUtils.isFixedChestType(block)) {
-                   Inventory inv = RLCUtils.getInventory(block);
-                   if (inv != null) {
-                      inv.clear();
-                      ChestType ct = info.ChestTypeId != null ? ChestType.getChestType(info.ChestTypeId) : null;
-                      OpenLootInventory.fillInvenory(inv, ct);
-                      if (Main.pl.getFixedChestSound() != null) Main.pl.getFixedChestSound().play(e.getKey());
-                      if (Main.pl.getFixedChestEffect() != null) Main.pl.getFixedChestEffect().play(e.getKey());
-                   }
-                }
-             }
-          }
+           for (Entry<Location, FixedChestInfo> e : Main.pl.FixedChests.entrySet()) {
+              FixedChestInfo info = e.getValue();
+              int k = info.Time - 1;
+              if (k > 0) info.Time = k;
+              else {
+                 // Use ChestType's spawnTimeMin/Max if available, otherwise fallback to global
+                 ChestType ct = info.ChestTypeId != null ? ChestType.getChestType(info.ChestTypeId) : null;
+                 int timeMin = (ct != null) ? ct.getSpawnTimeMin() : Main.pl.getFixedChestUpdateTimeMin();
+                 int timeMax = (ct != null) ? ct.getSpawnTimeMax() : Main.pl.getFixedChestUpdateTimeMax();
+                 info.Time = Math.max(FindAvaliableLocation.getRandom(timeMin, timeMax), 0);
+                 Block block = e.getKey().getBlock();
+                 if (RLCUtils.isFixedChestType(block)) {
+                    Inventory inv = RLCUtils.getInventory(block);
+                    if (inv != null) {
+                       inv.clear();
+                       OpenLootInventory.fillInvenory(inv, ct);
+                       if (Main.pl.getFixedChestSound() != null) Main.pl.getFixedChestSound().play(e.getKey());
+                       if (Main.pl.getFixedChestEffect() != null) Main.pl.getFixedChestEffect().play(e.getKey());
+                    }
+                 }
+              }
+           }
       }, 20L, 20L);
    }
 }

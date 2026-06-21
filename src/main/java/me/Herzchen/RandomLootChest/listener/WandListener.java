@@ -1,12 +1,9 @@
 package me.Herzchen.RandomLootChest.listener;
 
 import me.Herzchen.RandomLootChest.Main;
-import me.Herzchen.RandomLootChest.model.FixedChestInfo;
 import me.Herzchen.RandomLootChest.model.Selection;
-import me.Herzchen.RandomLootChest.util.FindAvaliableLocation;
 import me.Herzchen.RandomLootChest.util.MessageUtil;
 import me.Herzchen.RandomLootChest.util.RLCUtils;
-import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -48,18 +45,6 @@ public class WandListener implements Listener {
         }
         Selection.selections.put(player.getUniqueId(), sel);
         e.setCancelled(true);
-
-        if (RLCUtils.isFixedChestType(clickedBlock)) {
-            Location loc = clickedBlock.getLocation();
-            if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
-                Main.pl.FixedChests.put(loc, new FixedChestInfo(FindAvaliableLocation.getRandom(
-                        Main.pl.getFixedChestUpdateTimeMin(), Main.pl.getFixedChestUpdateTimeMax())));
-                MessageUtil.send(player, Main.pl.messages.get("wand.set_fixed", "<green>Đã set rương thành RLC chest!"));
-            } else if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                Main.pl.FixedChests.remove(loc);
-                MessageUtil.send(player, Main.pl.messages.get("wand.unset_fixed", "<green>Đã unset rương!"));
-            }
-        }
     }
 
     @EventHandler

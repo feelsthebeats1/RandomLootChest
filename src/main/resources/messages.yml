@@ -50,8 +50,6 @@ wand:
   no_permission: "<red>Không đủ quyền!"
   pos1_set: "<green>Đã đặt pos1 tại: <white>{loc}"
   pos2_set: "<green>Đã đặt pos2 tại: <white>{loc}"
-  set_fixed: "<green>Đã set rương thành RLC chest!"
-  unset_fixed: "<green>Đã unset rương!"
 
 # ===================== Đợi chọn rương (/rlc addchest) =====================
 wait:

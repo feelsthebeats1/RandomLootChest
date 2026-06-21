@@ -132,13 +132,11 @@ RandomChestOpenSound: CHEST_OPEN|BLOCK_CHEST_OPEN
 # "Vật liệu phải trong suốt và không phải đường ray hoặc cây non"
 ########################################################################################################################
 # Điều kiện khối bị thay thế
-SpawnBlockCondition: "AIR,SNOW,CARPET"
+SpawnBlockCondition: "AIR,SNOW"
 # Điều kiện khối bên dưới
-UnderBlockCondition: "!_TRANSPARENT_,!WATER,!STATIONARY_WATER,!LAVA,!STATIONARY_LAVA,!SOIL,!GRASS_PATH"
+UnderBlockCondition: "!_TRANSPARENT_,!WATER,!LAVA,!FARMLAND,!DIRT_PATH"
 # Điều kiện khối xung quanh
-SideBlockCondition: "!CACTUS"
-
-########################################################################################################################
+SideBlockCondition: "!CACTUS"#########################################################################################################
 ### rương vị trí cố định
 ########################################################################################################################
 # Khoảng thời gian cập nhật inventory (ngẫu nhiên giữa Min/Max, giây)

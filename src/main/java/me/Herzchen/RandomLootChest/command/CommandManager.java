@@ -1,6 +1,7 @@
 package me.Herzchen.RandomLootChest.command;
 
 import me.Herzchen.RandomLootChest.Main;
+import me.Herzchen.RandomLootChest.gui.OpenLootInventory;
 import me.Herzchen.RandomLootChest.model.ChestType;
 import me.Herzchen.RandomLootChest.model.FixedChestInfo;
 import me.Herzchen.RandomLootChest.model.RandomChestInfo;
@@ -109,8 +110,10 @@ public class CommandManager implements CommandExecutor {
         ItemMeta m = wand.getItemMeta();
         m.displayName(MessageUtil.parse("<gold><bold>RLC Wand</bold>"));
         m.lore(List.of(
-            MessageUtil.parse("<gray>Chuột trái: Chọn pos1/Set RLC chest"),
-            MessageUtil.parse("<gray>Chuột phải: Chọn pos2/Unset RLC chest")
+            MessageUtil.parse("<gray>Chuột trái: Chọn pos1"),
+            MessageUtil.parse("<gray>Chuột phải: Chọn pos2"),
+            MessageUtil.parse("<gray>Dùng <yellow>/rlc set [type]"),
+            MessageUtil.parse("<gray>và <yellow>/rlc unset <gray>để thao tác")
         ));
 
         // Add NBT tag to identify the wand
@@ -138,6 +141,10 @@ public class CommandManager implements CommandExecutor {
         Selection sel = Selection.selections.getOrDefault(p.getUniqueId(), new Selection());
         if (sel == null || sel.pos1 == null || sel.pos2 == null) { MessageUtil.send(p, plugin.messages.get("command.addchest_select_no_region", "<red>Vui lòng chọn vùng bằng wand!")); return true; }
         String finalChestType = chestTypeId;
+        ChestType ct = finalChestType != null ? ChestType.getChestType(finalChestType) : null;
+        // Use ChestType's spawnTimeMin/Max if available, otherwise fallback to global
+        int timeMin = (ct != null) ? ct.getSpawnTimeMin() : plugin.getFixedChestUpdateTimeMin();
+        int timeMax = (ct != null) ? ct.getSpawnTimeMax() : plugin.getFixedChestUpdateTimeMax();
         int cnt = 0, already = 0;
         for (int x = Math.min(sel.pos1.getBlockX(), sel.pos2.getBlockX()); x <= Math.max(sel.pos1.getBlockX(), sel.pos2.getBlockX()); x++)
             for (int y = Math.min(sel.pos1.getBlockY(), sel.pos2.getBlockY()); y <= Math.max(sel.pos1.getBlockY(), sel.pos2.getBlockY()); y++)
@@ -147,8 +154,16 @@ public class CommandManager implements CommandExecutor {
                         if (plugin.FixedChests.containsKey(loc)) already++;
                         else {
                             plugin.FixedChests.put(loc, new FixedChestInfo(
-                                    FindAvaliableLocation.getRandom(plugin.getFixedChestUpdateTimeMin(), plugin.getFixedChestUpdateTimeMax()),
+                                    FindAvaliableLocation.getRandom(timeMin, timeMax),
                                     finalChestType));
+                            // Fill loot and play effects
+                            Inventory inv = RLCUtils.getInventory(loc.getBlock());
+                            if (inv != null) {
+                                inv.clear();
+                                OpenLootInventory.fillInvenory(inv, ct);
+                            }
+                            if (plugin.getFixedChestSound() != null) plugin.getFixedChestSound().play(loc);
+                            if (plugin.getFixedChestEffect() != null) plugin.getFixedChestEffect().play(loc);
                             cnt++;
                         }
                 }
@@ -366,18 +381,22 @@ public class CommandManager implements CommandExecutor {
         String chestTypeId = ct.getId();
         int randomCount = 0, fixedCount = 0;
 
-        if (targetType == null || targetType.equals("random")) {
-            for (Map.Entry<Location, RandomChestInfo> e : plugin.RandomChests.entrySet())
-                if (isSameChestType(e.getValue().ChestTypeId, chestTypeId)) { e.getValue().Time = ct.getKillTime(); randomCount++; }
-        }
+         if (targetType == null || targetType.equals("random")) {
+             for (Map.Entry<Location, RandomChestInfo> e : plugin.RandomChests.entrySet())
+                 if (isSameChestType(e.getValue().ChestTypeId, chestTypeId)) { e.getValue().Time = 0; randomCount++; }
+         }
 
-        if (targetType == null || targetType.equals("fixedchest")) {
-            for (Map.Entry<Location, FixedChestInfo> e : plugin.FixedChests.entrySet())
-                if (isSameChestType(e.getValue().ChestTypeId, chestTypeId)) {
-                    e.getValue().Time = Math.max(FindAvaliableLocation.getRandom(plugin.getFixedChestUpdateTimeMin(), plugin.getFixedChestUpdateTimeMax()), 0);
-                    fixedCount++;
-                }
-        }
+         if (targetType == null || targetType.equals("fixedchest")) {
+             for (Map.Entry<Location, FixedChestInfo> e : plugin.FixedChests.entrySet())
+                 if (isSameChestType(e.getValue().ChestTypeId, chestTypeId)) {
+                     // Use ChestType's spawnTimeMin/Max if available, otherwise fallback to global
+                     ChestType fixedCt = e.getValue().ChestTypeId != null ? ChestType.getChestType(e.getValue().ChestTypeId) : null;
+                     int timeMin = (fixedCt != null) ? fixedCt.getSpawnTimeMin() : plugin.getFixedChestUpdateTimeMin();
+                     int timeMax = (fixedCt != null) ? fixedCt.getSpawnTimeMax() : plugin.getFixedChestUpdateTimeMax();
+                     e.getValue().Time = Math.max(FindAvaliableLocation.getRandom(timeMin, timeMax), 0);
+                     fixedCount++;
+                 }
+         }
 
         if (targetType == null) {
             MessageUtil.send(s, plugin.messages.getFormatted("command.resettimer_done",
