@@ -75,8 +75,11 @@ public class ItemAdderGui implements Listener {
         for (int i = 0; i < 10000 && s.isConfigurationSection(String.valueOf(i)); i++) {
             ItemStack item = Objects.requireNonNull(s.getConfigurationSection(String.valueOf(i))).getItemStack("item");
             int chance = Objects.requireNonNull(s.getConfigurationSection(String.valueOf(i))).getInt("chance");
+            int aMin = s.getConfigurationSection(String.valueOf(i)).getInt("amount-min", item.getAmount());
+            int aMax = s.getConfigurationSection(String.valueOf(i)).getInt("amount-max", aMin);
             session.setItem(i, item);
             session.setChance(i, chance);
+            session.setAmountRange(i, aMin, aMax);
         }
     }
 
@@ -103,8 +106,16 @@ public class ItemAdderGui implements Listener {
             ItemStack item = session.getItem(i);
             if (item != null) {
                 target.createSection(String.valueOf(toset));
-                Objects.requireNonNull(target.getConfigurationSection(String.valueOf(toset))).set("item", item);
-                Objects.requireNonNull(target.getConfigurationSection(String.valueOf(toset))).set("chance", session.getChance(i));
+                ConfigurationSection sec = target.getConfigurationSection(String.valueOf(toset));
+                assert sec != null;
+                sec.set("item", item);
+                sec.set("chance", session.getChance(i));
+                int aMin = session.getAmountMin(i);
+                int aMax = session.getAmountMax(i);
+                if (aMin != 1 || aMax != item.getAmount()) {
+                    sec.set("amount-min", aMin);
+                    sec.set("amount-max", aMax);
+                }
                 toset++;
             }
         }
@@ -395,12 +406,16 @@ public class ItemAdderGui implements Listener {
                 .disableAllInteractions()
                 .create();
 
-        // Decorations
+        // Decorations (NOT including slot 9 and 13; those are amount/chance displays)
         GuiItem pane = ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).asGuiItem(event -> event.setCancelled(true));
-        List<Integer> deco = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 19, 20, 21, 22, 23, 24, 25, 26);
+        List<Integer> deco = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 17, 19, 20, 21, 22, 23, 24, 25, 26);
         gui.setItem(deco, pane);
 
-        // Current chance display (slot 13) — clickable to type custom value
+        // Amount display (slot 9) — clickable to edit via chat
+        GuiItem amountDisplay = buildAmountDisplay(session, id, item, player);
+        gui.setItem(9, amountDisplay);
+
+        // Current chance display (slot 13)
         GuiItem currentDisplay = buildChanceDisplay(session, id, item, chanceValue, player);
         gui.setItem(13, currentDisplay);
 
@@ -438,18 +453,67 @@ public class ItemAdderGui implements Listener {
         gui.open(player);
     }
 
-    /** Build the chance-display icon with a clickable name, progress-bar and amount lore. */
-    private GuiItem buildChanceDisplay(ItemEditSession session, int id, ItemStack item, int chance, Player player) {
-        String bar = progressBar(chance);
-        int amount = session.getItemAmount(id);
-        return ItemBuilder.from(item)
-                .name(MessageUtil.parse("<gold>Tỷ lệ hiện tại: <red>" + chance + " <gold>| Số lượng: <red>" + amount))
+    /** Build the amount display (slot 9). Click to edit via chat: type "5" or "2-5". */
+    private GuiItem buildAmountDisplay(ItemEditSession session, int id, ItemStack item, Player player) {
+        String display = session.getAmountDisplay(id);
+        return ItemBuilder.from(Material.REPEATER)
+                .name(MessageUtil.parse("<gold>Số lượng: <white>" + display))
                 .lore(
-                        MessageUtil.parse("<gray>Click để nhập tỷ lệ hoặc số lượng"),
+                        MessageUtil.parse("<gray>Click để nhập số lượng"),
                         MessageUtil.parse("<gray>qua chat."),
                         Component.empty(),
-                        MessageUtil.parse("<gray>Nhập số → đặt tỷ lệ"),
-                        MessageUtil.parse("<gray>Nhập <white>a &lt;số&gt;<gray> → đặt số lượng"),
+                        MessageUtil.parse("<gray>Nhập <white>5<gray> → số lượng cố định là 5"),
+                        MessageUtil.parse("<gray>Nhập <white>2-5<gray> → số lượng ngẫu nhiên 2-5"),
+                        MessageUtil.parse("<gray>(tự động đảo nếu nhập 5-2)")
+                )
+                .asGuiItem(event -> {
+                    event.setCancelled(true);
+                    player.closeInventory();
+                    requestChatInput(player,
+                            "<yellow>Nhập số lượng (vd: 5) hoặc khoảng (vd: 2-5): <white>(ESC để hủy)",
+                            input -> {
+                                String trimmed = input.trim();
+                                if (trimmed.contains("-")) {
+                                    // Range
+                                    String[] parts = trimmed.split("-", 2);
+                                    try {
+                                        int a = Integer.parseInt(parts[0].trim());
+                                        int b = Integer.parseInt(parts[1].trim());
+                                        if (a < 1 || b < 1 || a > 99 || b > 99) {
+                                            MessageUtil.send(player, Main.pl.messages.get("gui.amount_out_of_range", "<red>Số lượng phải từ 1 đến 99!"));
+                                        } else {
+                                            session.setAmountRange(id, a, b);
+                                            MessageUtil.send(player, "<green>Đã đặt số lượng: <white>" + session.getAmountDisplay(id));
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        MessageUtil.send(player, "<red>Định dạng không hợp lệ! Vui lòng nhập '5' hoặc '2-5'.");
+                                    }
+                                } else {
+                                    // Fixed amount
+                                    try {
+                                        int val = Integer.parseInt(trimmed);
+                                        if (val < 1 || val > 99) {
+                                            MessageUtil.send(player, Main.pl.messages.get("gui.amount_out_of_range", "<red>Số lượng phải từ 1 đến 99!"));
+                                        } else {
+                                            session.setFixedAmount(id, val);
+                                            MessageUtil.send(player, Main.pl.messages.getFormatted("gui.amount_set", "{so_luong}", session.getAmountDisplay(id)));
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        MessageUtil.send(player, "<red>Định dạng không hợp lệ! Vui lòng nhập '5' hoặc '2-5'.");
+                                    }
+                                }
+                                openChanceEditor(player, id);
+                            });
+                });
+    }
+
+    /** Build the chance-display icon (slot 13). Click to edit chance via chat. */
+    private GuiItem buildChanceDisplay(ItemEditSession session, int id, ItemStack item, int chance, Player player) {
+        String bar = progressBar(chance);
+        return ItemBuilder.from(item)
+                .name(MessageUtil.parse("<gold>Tỷ lệ: <red>" + chance))
+                .lore(
+                        MessageUtil.parse("<gray>Click để nhập tỷ lệ qua chat."),
                         Component.empty(),
                         MessageUtil.parse(bar)
                 )
@@ -457,35 +521,18 @@ public class ItemAdderGui implements Listener {
                     event.setCancelled(true);
                     player.closeInventory();
                     requestChatInput(player,
-                            "<yellow>Nhập tỷ lệ (1-100) hoặc 'a &lt;số&gt;' (1-99) để đặt số lượng: <white>(ESC để hủy)",
+                            Main.pl.messages.get("gui.chance_prompt", "<yellow>Nhập tỷ lệ mới (1-100) cho vật phẩm này: <white>(ESC để hủy)"),
                             input -> {
-                                String trimmed = input.trim();
-                                // "a <number>" → set amount
-                                if (trimmed.toLowerCase().startsWith("a ")) {
-                                    try {
-                                        int val = Integer.parseInt(trimmed.substring(2).trim());
-                                        if (val < 1 || val > 99) {
-                                            MessageUtil.send(player, Main.pl.messages.get("gui.amount_out_of_range", "<red>Số lượng phải từ 1 đến 99!"));
-                                        } else {
-                                            session.setItemAmount(id, val);
-                                            MessageUtil.send(player, Main.pl.messages.getFormatted("gui.amount_set", "{so_luong}", String.valueOf(val)));
-                                        }
-                                    } catch (NumberFormatException e) {
-                                        MessageUtil.send(player, "<red>Số không hợp lệ! Vui lòng nhập lại.");
+                                try {
+                                    int val = Integer.parseInt(input.trim());
+                                    if (val < 1 || val > 100) {
+                                        MessageUtil.send(player, Main.pl.messages.get("gui.chance_out_of_range", "<red>Tỷ lệ phải từ 1 đến 100!"));
+                                    } else {
+                                        session.setChance(id, val);
+                                        MessageUtil.send(player, Main.pl.messages.getFormatted("gui.chance_set", "{ty_le}", String.valueOf(val)));
                                     }
-                                } else {
-                                    // plain number → set chance
-                                    try {
-                                        int val = Integer.parseInt(trimmed);
-                                        if (val < 1 || val > 100) {
-                                            MessageUtil.send(player, Main.pl.messages.get("gui.chance_out_of_range", "<red>Tỷ lệ phải từ 1 đến 100!"));
-                                        } else {
-                                            session.setChance(id, val);
-                                            MessageUtil.send(player, Main.pl.messages.getFormatted("gui.chance_set", "{ty_le}", String.valueOf(val)));
-                                        }
-                                    } catch (NumberFormatException e) {
-                                        MessageUtil.send(player, Main.pl.messages.get("gui.chance_invalid_number", "<red>Số không hợp lệ! Vui lòng nhập lại."));
-                                    }
+                                } catch (NumberFormatException e) {
+                                    MessageUtil.send(player, Main.pl.messages.get("gui.chance_invalid_number", "<red>Số không hợp lệ! Vui lòng nhập lại."));
                                 }
                                 openChanceEditor(player, id);
                             });

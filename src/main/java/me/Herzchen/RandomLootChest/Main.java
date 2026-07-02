@@ -44,6 +44,10 @@ public class Main extends JavaPlugin {
     public ArrayList<String> commands;
     public ArrayList<Player> abletobreak;
     public static HashMap<Integer, ItemStack> items = new HashMap<>();
+    /** Parallel to {@link #items}: per-entry amount min (1-99). Default 1 if absent. */
+    public static HashMap<Integer, Integer> itemMin = new HashMap<>();
+    /** Parallel to {@link #items}: per-entry amount max (1-99). Default 1 if absent. */
+    public static HashMap<Integer, Integer> itemMax = new HashMap<>();
     public HashMap<Player, ItemEditSession> editSessions = new HashMap<>();
     public HashMap<Player, WaitChooseChest> addChestplayers = new HashMap<>();
     public HashMap<Location, FixedChestInfo> FixedChests = new HashMap<>();

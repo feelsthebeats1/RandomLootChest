@@ -12,35 +12,63 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
 public class OpenLootInventory {
    public static OpenLootInventory instance = new OpenLootInventory();
+   private static final Random RNG = new Random();
 
     public static ItemStack getrandomitem(ChestType ct) {
         if (ct != null && ct.getLootTable() != null) {
            ConfigurationSection lt = ct.getLootTable();
            if (lt != null) {
-              java.util.Map<Integer, ItemStack> items = new java.util.HashMap<>();
+              Map<Integer, ItemStack> items = new HashMap<>();
+              Map<Integer, Integer> aMin = new HashMap<>();
+              Map<Integer, Integer> aMax = new HashMap<>();
               for (String k : lt.getKeys(false)) {
                  ConfigurationSection s = lt.getConfigurationSection(k);
                  if (s != null) {
                     ItemStack it = s.getItemStack("item");
                     int ch = s.getInt("chance", 1);
-                    for (int i = 0; i < ch; i++) items.put(items.size(), it);
+                    int mn = Math.max(1, s.getInt("amount-min", it != null ? it.getAmount() : 1));
+                    int mx = Math.max(1, s.getInt("amount-max", mn));
+                    int key = items.size();
+                    for (int i = 0; i < ch; i++) {
+                        items.put(key, it);
+                        aMin.put(key, Math.min(mn, mx));
+                        aMax.put(key, Math.max(mn, mx));
+                    }
                  }
               }
               if (!items.isEmpty()) {
-                  ItemStack result = items.get(new Random().nextInt(items.size()));
-                  return result != null ? result.clone() : new ItemStack(Material.AIR);
+                  int pick = RNG.nextInt(items.size());
+                  ItemStack result = items.get(pick);
+                  if (result != null) {
+                      result = result.clone();
+                      int min = aMin.getOrDefault(pick, 1);
+                      int max = aMax.getOrDefault(pick, result.getAmount());
+                      if (max >= min) result.setAmount(min + RNG.nextInt(max - min + 1));
+                      return result;
+                  }
+                  return new ItemStack(Material.AIR);
               }
            }
         }
+        // Fallback to global pool
         int all = Main.items.size();
         if (all == 0) return new ItemStack(Material.AIR);
-        ItemStack result = Main.items.get(new Random().nextInt(all));
-        return result != null ? result.clone() : new ItemStack(Material.AIR);
+        int pick = RNG.nextInt(all);
+        ItemStack result = Main.items.get(pick);
+        if (result == null) return new ItemStack(Material.AIR);
+        result = result.clone();
+        int min = Main.itemMin.getOrDefault(pick, 1);
+        int max = Main.itemMax.getOrDefault(pick, result.getAmount());
+        if (max >= min) result.setAmount(min + RNG.nextInt(max - min + 1));
+        return result;
     }
 
    public static int findavaliablerandomSlot(Inventory inv) {

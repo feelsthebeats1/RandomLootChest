@@ -20,8 +20,13 @@ public class LoadChances {
       for (int i = 0; i < 100000 && section.isConfigurationSection(String.valueOf(i)); i++) {
          ItemStack item = Objects.requireNonNull(section.getConfigurationSection(String.valueOf(i))).getItemStack("item");
          int chance = Objects.requireNonNull(section.getConfigurationSection(String.valueOf(i))).getInt("chance");
+         int aMin = Math.max(1, section.getConfigurationSection(String.valueOf(i)).getInt("amount-min", 1));
+         int aMax = Math.max(1, section.getConfigurationSection(String.valueOf(i)).getInt("amount-max", item != null ? item.getAmount() : 1));
          for (int j = 0; j < chance; j++) {
-            Main.items.put(idx++, item);
+            Main.items.put(idx, item);
+            Main.itemMin.put(idx, aMin);
+            Main.itemMax.put(idx, aMax);
+            idx++;
          }
       }
       if (idx == 0) {
@@ -29,5 +34,5 @@ public class LoadChances {
       }
    }
 
-   public void clear() { Main.items.clear(); }
+   public void clear() { Main.items.clear(); Main.itemMin.clear(); Main.itemMax.clear(); }
 }

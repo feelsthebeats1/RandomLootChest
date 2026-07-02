@@ -41,6 +41,50 @@ public class ItemEditSession {
         chances.merge(id, delta, (old, d) -> Math.max(1, Math.min(100, old + d)));
     }
 
+    // ── amount range ──
+
+    private final Map<Integer, Integer> amountMin = new HashMap<>();
+    private final Map<Integer, Integer> amountMax = new HashMap<>();
+
+    public int getAmountMin(int id) { return amountMin.getOrDefault(id, 1); }
+    public int getAmountMax(int id) { return amountMax.getOrDefault(id, getItemAmount(id)); }
+
+    /** Set a fixed amount (min == max). */
+    public void setFixedAmount(int id, int amount) {
+        int clamped = Math.max(1, Math.min(99, amount));
+        amountMin.put(id, clamped);
+        amountMax.put(id, clamped);
+        setItemAmount(id, clamped);
+    }
+
+    /** Set a range. If min > max, they are swapped. */
+    public void setAmountRange(int id, int min, int max) {
+        int a = Math.max(1, Math.min(99, Math.min(min, max)));
+        int b = Math.max(1, Math.min(99, Math.max(min, max)));
+        amountMin.put(id, a);
+        amountMax.put(id, b);
+        setItemAmount(id, b); // display default = max
+    }
+
+    /** True if the item has a range (min != max). */
+    public boolean hasAmountRange(int id) {
+        return getAmountMin(id) != getAmountMax(id);
+    }
+
+    /** User-friendly display: "5" or "3-8". */
+    public String getAmountDisplay(int id) {
+        int mn = getAmountMin(id);
+        int mx = getAmountMax(id);
+        return mn == mx ? String.valueOf(mn) : mn + "-" + mx;
+    }
+
+    public void clearAmountRange(int id) {
+        amountMin.remove(id);
+        amountMax.remove(id);
+    }
+
+    public void clearAll() { items.clear(); chances.clear(); amountMin.clear(); amountMax.clear(); }
+
     /** Get the stored ItemStack's amount (fallback 1 if not set or null). */
     public int getItemAmount(int id) {
         ItemStack s = items.get(id);
@@ -62,8 +106,6 @@ public class ItemEditSession {
     /** Current search filter for the chest type selector. Empty = show all. */
     public String getSearchFilter() { return searchFilter; }
     public void setSearchFilter(String v) { searchFilter = v == null ? "" : v; }
-
-    public void clearAll() { items.clear(); chances.clear(); }
 
     // ── session state ──
 
