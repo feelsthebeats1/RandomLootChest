@@ -287,7 +287,9 @@ public class ItemAdderGui implements Listener {
                         // Right click → edit chance
                         event.setCancelled(true);
                         saveCurrentPage(player, gui.getInventory(), page);
+                        session.setKeepOnClose(true);    // don't let closeGuiAction end the session
                         player.closeInventory();
+                        session.setKeepOnClose(false);
                         openChanceEditor(player, itemId);
                     } else if (event.isShiftClick() && event.getClick().isLeftClick()) {
                         // Shift + Left click → delete item
@@ -330,7 +332,9 @@ public class ItemAdderGui implements Listener {
                     event.setCancelled(true);
                     saveCurrentPage(player, gui.getInventory(), page);
                     if (page > 1) {
+                        session.setKeepOnClose(true);
                         player.closeInventory();
+                        session.setKeepOnClose(false);
                         session.setCurrentPage(page - 1);
                         openPage(player);
                     } else {
@@ -352,7 +356,9 @@ public class ItemAdderGui implements Listener {
                     if (page >= 5) return;
                     if (isFull(gui.getInventory())) {
                         saveCurrentPage(player, gui.getInventory(), page);
+                        session.setKeepOnClose(true);
                         player.closeInventory();
+                        session.setKeepOnClose(false);
                         session.setCurrentPage(page + 1);
                         openPage(player);
                     } else {
@@ -361,16 +367,16 @@ public class ItemAdderGui implements Listener {
                 });
         gui.setItem(53, next);
 
-        // Close action: save items
+        // Close action: save items (unless navigating to chance editor / another page)
         gui.setCloseGuiAction(event -> {
             Player p = (Player) event.getPlayer();
-            saveCurrentPage(p, gui.getInventory(), page);
             ItemEditSession sess = Main.pl.editSessions.get(p);
-            if (sess != null) {
-                saveSession(sess, sess.getStorageKey());
-                MessageUtil.send(p, Main.pl.messages.get("gui.items_updated", "<green>Danh sách vật phẩm đã được cập nhật!"));
-                endSession(p);
-            }
+            if (sess == null) return;
+            if (sess.isKeepOnClose()) return; // navigation — don't end session
+            saveCurrentPage(p, gui.getInventory(), page);
+            saveSession(sess, sess.getStorageKey());
+            MessageUtil.send(p, Main.pl.messages.get("gui.items_updated", "<green>Danh sách vật phẩm đã được cập nhật!"));
+            endSession(p);
         });
 
         gui.open(player);

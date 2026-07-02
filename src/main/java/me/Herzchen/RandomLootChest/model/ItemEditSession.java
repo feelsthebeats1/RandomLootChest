@@ -107,6 +107,12 @@ public class ItemEditSession {
     public String getSearchFilter() { return searchFilter; }
     public void setSearchFilter(String v) { searchFilter = v == null ? "" : v; }
 
+    /** When true, {@code closeGuiAction} must NOT end this session (e.g. navigating to chance editor). */
+    private boolean keepOnClose = false;
+
+    public boolean isKeepOnClose() { return keepOnClose; }
+    public void setKeepOnClose(boolean v) { keepOnClose = v; }
+
     // ── session state ──
 
     public String getEditingChestType() { return editingChestType; }
