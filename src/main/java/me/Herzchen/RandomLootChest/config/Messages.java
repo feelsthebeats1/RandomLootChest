@@ -41,10 +41,12 @@ public class Messages {
 
     public FileConfiguration getConfig() { return config; }
 
-    /** @return raw message string, or {@code null} if the key is absent (used for optional messages). */
+    /** @return raw message string, or {@code null} if the key is absent or empty (used for optional messages). */
     public String get(String path) {
-        if (config.isSet(path)) return config.getString(path);
-        return null;
+        if (!config.isSet(path)) return null;
+        String value = config.getString(path);
+        if (value == null || value.trim().isEmpty()) return null;
+        return value;
     }
 
     /** @return raw message string, falling back to {@code def} when the key is absent. */

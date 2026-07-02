@@ -9,6 +9,7 @@ import me.Herzchen.RandomLootChest.database.*;
 import me.Herzchen.RandomLootChest.database.Timer;
 import me.Herzchen.RandomLootChest.listener.*;
 import me.Herzchen.RandomLootChest.model.FixedChestInfo;
+import me.Herzchen.RandomLootChest.model.ItemEditSession;
 import me.Herzchen.RandomLootChest.model.RandomChestInfo;
 import me.Herzchen.RandomLootChest.generator.GenerateChest;
 import me.Herzchen.RandomLootChest.region.RegionConfig;
@@ -42,11 +43,8 @@ public class Main extends JavaPlugin {
     public ItemAdderGui itemAdderGui;
     public ArrayList<String> commands;
     public ArrayList<Player> abletobreak;
-    public ArrayList<Player> additem;
     public static HashMap<Integer, ItemStack> items = new HashMap<>();
-    public HashMap<Integer, ItemStack> itemstoadd;
-    public HashMap<Integer, Integer> chances;
-    public HashMap<Player, Integer> currentpage, idediting, lastpageno;
+    public HashMap<Player, ItemEditSession> editSessions = new HashMap<>();
     public HashMap<Player, WaitChooseChest> addChestplayers = new HashMap<>();
     public HashMap<Location, FixedChestInfo> FixedChests = new HashMap<>();
     public HashMap<Location, RandomChestInfo> RandomChests = new HashMap<>();
@@ -60,9 +58,7 @@ public class Main extends JavaPlugin {
         chestTypeConfig = new ChestTypeConfig(); lc = LoadChances.instance;
         timer = Timer.instance; gc = new GenerateChest();
         lootEvent = new LootEvent(); itemAdderGui = new ItemAdderGui();
-        commands = new ArrayList<>(); abletobreak = new ArrayList<>(); additem = new ArrayList<>();
-        itemstoadd = new HashMap<>(); chances = new HashMap<>();
-        currentpage = new HashMap<>(); idediting = new HashMap<>(); lastpageno = new HashMap<>();
+        commands = new ArrayList<>(); abletobreak = new ArrayList<>();
     }
 
     public void onEnable() {

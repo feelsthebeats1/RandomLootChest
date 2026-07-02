@@ -16,14 +16,16 @@ public class LoadChances {
       clear();
       ConfigurationSection section = itdb();
       if (section == null) return;
+      int idx = 0;
       for (int i = 0; i < 100000 && section.isConfigurationSection(String.valueOf(i)); i++) {
          ItemStack item = Objects.requireNonNull(section.getConfigurationSection(String.valueOf(i))).getItemStack("item");
          int chance = Objects.requireNonNull(section.getConfigurationSection(String.valueOf(i))).getInt("chance");
          for (int j = 0; j < chance; j++) {
-            for (int k = 0; k < 32000; k++) {
-               if (!Main.items.containsKey(k)) { Main.items.put(k, item); break; }
-            }
+            Main.items.put(idx++, item);
          }
+      }
+      if (idx == 0) {
+         Main.pl.getLogger().warning("Global loot table (ItemDatabase) is empty! Placeholder items may be given.");
       }
    }
 

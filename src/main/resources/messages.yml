@@ -191,6 +191,8 @@ gui:
   chance_invalid_number: "<red>Số không hợp lệ! Vui lòng nhập lại."
   chance_too_high: "<red>Tỷ lệ không thể lớn hơn 100!"
   chance_too_low: "<red>Tỷ lệ không thể nhỏ hơn 1!"
+  amount_out_of_range: "<red>Số lượng phải từ 1 đến 99!"
+  amount_set: "<green>Đã đặt số lượng thành: <white>{so_luong}"
   cancelled: "<yellow>Đã hủy."
   fixed_added: "<green>rương cố định đã được thêm vào bộ sưu tập <white>=)"
   fixed_add_error: "<red>Có gì đó không ổn <white>=("
