@@ -120,15 +120,70 @@ public class ItemAdderGui implements Listener {
     // ── chest type selector ──
 
     public void openChestTypeSelector(Player player) {
-        int count = ChestType.getAllChestTypes().size() + 1;
+        ItemEditSession sess = session(player);
+        String filter = sess.getSearchFilter();
+
+        // Collect matching chest types
+        List<ChestType> allTypes = new ArrayList<>(ChestType.getAllChestTypes().values());
+        List<ChestType> filteredTypes;
+        if (filter.isEmpty()) {
+            filteredTypes = allTypes;
+        } else {
+            String lower = filter.toLowerCase();
+            filteredTypes = new ArrayList<>();
+            // Always include "global" as a match when filter matches "global"
+            for (ChestType ct : allTypes) {
+                if (ct.getId().toLowerCase().contains(lower) || ct.getDisplayName().toLowerCase().contains(lower))
+                    filteredTypes.add(ct);
+            }
+        }
+
+        // +1 slot for global, +1 slot for search bar
+        int extraSlots = 2; // global + search
+        if (!filter.isEmpty()) extraSlots++; // clear button
+        int count = filteredTypes.size() + extraSlots;
         int rows = Math.max(1, (int) Math.ceil(count / 9.0));
         int size = Math.min(54, rows * 9);
 
+        Component title = filter.isEmpty()
+                ? MessageUtil.parse("<dark_gray>Chọn loại rương để chỉnh sửa")
+                : MessageUtil.parse("<dark_gray>Tìm: <white>" + filter);
+
         Gui gui = Gui.gui()
-                .title(MessageUtil.parse("<dark_gray>Chọn loại rương để chỉnh sửa"))
+                .title(title)
                 .rows(size / 9)
                 .create();
 
+        // ── Search bar ──
+        GuiItem searchItem = ItemBuilder.from(Material.COMPASS)
+                .name(MessageUtil.parse("<aqua><bold>Tìm kiếm</bold></aqua>"))
+                .lore(
+                        MessageUtil.parse("<gray>Click để nhập từ khoá tìm kiếm"),
+                        filter.isEmpty()
+                                ? MessageUtil.parse("<gray>(đang hiện tất cả)")
+                                : MessageUtil.parse("<gray>Đang lọc: <white>" + filter)
+                )
+                .asGuiItem(event -> {
+                    event.setCancelled(true);
+                    player.closeInventory();
+                    // Clear previous chat handlers
+                    chatInputHandlers.remove(player);
+                    requestChatInput(player,
+                            "<yellow>Nhập từ khoá tìm kiếm (hoặc nhấn ESC để hủy):",
+                            input -> {
+                                String trimmed = input.trim();
+                                ItemEditSession s = session(player);
+                                if (trimmed.equalsIgnoreCase("clear")) {
+                                    s.setSearchFilter("");
+                                } else {
+                                    s.setSearchFilter(trimmed);
+                                }
+                                openChestTypeSelector(player);
+                            });
+                });
+        gui.addItem(searchItem);
+
+        // ── Global Items ──
         GuiItem globalItem = ItemBuilder.from(Material.CHEST)
                 .name(MessageUtil.parse("<gold><bold>Global Items</bold>"))
                 .lore(
@@ -137,17 +192,18 @@ public class ItemAdderGui implements Listener {
                 )
                 .asGuiItem(event -> {
                     event.setCancelled(true);
-                    ItemEditSession sess = session(player);
-                    sess.setEditingChestType(null);
+                    ItemEditSession s = session(player);
+                    s.setEditingChestType(null);
                     MessageUtil.send(player, Main.pl.messages.get("gui.selected_global", "<green>Đã chọn: <white>Global Items"));
                     player.closeInventory();
-                    loadSession(sess, GLOBAL_KEY);
-                    sess.setCurrentPage(1);
+                    loadSession(s, GLOBAL_KEY);
+                    s.setCurrentPage(1);
                     openPage(player);
                 });
         gui.addItem(globalItem);
 
-        for (ChestType ct : ChestType.getAllChestTypes().values()) {
+        // ── Filtered chest types ──
+        for (ChestType ct : filteredTypes) {
             String ctId = ct.getId();
             GuiItem ctItem = ItemBuilder.from(ct.getMaterial())
                     .name(MessageUtil.parse("<gold><bold>" + ct.getDisplayName() + "</bold>"))
@@ -157,15 +213,30 @@ public class ItemAdderGui implements Listener {
                     )
                     .asGuiItem(event -> {
                         event.setCancelled(true);
-                        ItemEditSession sess = session(player);
-                        sess.setEditingChestType(ctId);
+                        ItemEditSession s = session(player);
+                        s.setEditingChestType(ctId);
                         MessageUtil.send(player, Main.pl.messages.getFormatted("gui.selected_type", "{ten}", ct.getDisplayName()));
                         player.closeInventory();
-                        loadSession(sess, ctId);
-                        sess.setCurrentPage(1);
+                        loadSession(s, ctId);
+                        s.setCurrentPage(1);
                         openPage(player);
                     });
             gui.addItem(ctItem);
+        }
+
+        // ── Clear filter button (only visible when filter is active) ──
+        if (!filter.isEmpty()) {
+            GuiItem clearItem = ItemBuilder.from(Material.BARRIER)
+                    .name(MessageUtil.parse("<red><bold>Xoá lọc</bold></red>"))
+                    .lore(MessageUtil.parse("<gray>Hiện tất cả loại rương"))
+                    .asGuiItem(event -> {
+                        event.setCancelled(true);
+                        ItemEditSession s = session(player);
+                        s.setSearchFilter("");
+                        player.closeInventory();
+                        openChestTypeSelector(player);
+                    });
+            gui.addItem(clearItem);
         }
 
         gui.open(player);

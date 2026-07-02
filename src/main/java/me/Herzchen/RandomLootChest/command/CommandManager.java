@@ -552,9 +552,34 @@ public class CommandManager implements CommandExecutor {
         return true;
     }
 
-    // ====== /rlc loottable <chestType> ======
+    // ====== /rlc loottable <chestType> / loottable reset <chestType> ======
     private boolean handleLootTable(CommandSender s, String[] a) {
         if (s instanceof Player p && !p.hasPermission("randomlootchest.loottable")) { MessageUtil.send(s, plugin.messages.get("general.no_permission", "<red>Không đủ quyền.")); return true; }
+
+        // /rlc loottable reset <loại> — xoá toàn bộ loot table của 1 chest type
+        if (a.length >= 3 && a[1].equalsIgnoreCase("reset")) {
+            ChestType ct = ChestType.getChestType(a[2]);
+            if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "{loai}", a[2])); return true; }
+            String resetTarget = a[2].equalsIgnoreCase("global") ? null : ct.getId();
+            ConfigurationSection target = Main.pl.db.data.getConfigurationSection("ItemDatabase");
+            if (target != null) {
+                if (resetTarget == null) {
+                    // Reset global: only clear numeric keys
+                    for (String k : target.getKeys(false))
+                        if (k.matches("\\d+")) target.set(k, null);
+                } else {
+                    ConfigurationSection sub = target.getConfigurationSection(resetTarget);
+                    if (sub != null) {
+                        for (String k : sub.getKeys(false)) sub.set(k, null);
+                    }
+                }
+                Main.pl.db.saveData();
+                Main.pl.lc.loaditems();
+            }
+            MessageUtil.send(s, plugin.messages.getFormatted("command.loottable_reset_done", "<green>Đã reset loot table cho '<yellow>{loai}<green>'!", "{loai}", ct.getId()));
+            return true;
+        }
+
         if (a.length < 2) { MessageUtil.send(s, plugin.messages.get("command.loottable_usage")); return true; }
         ChestType ct = ChestType.getChestType(a[1]);
         if (ct == null) { MessageUtil.send(s, plugin.messages.getFormatted("general.chest_type_not_found", "{loai}", a[1])); return true; }

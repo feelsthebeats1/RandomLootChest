@@ -55,6 +55,14 @@ public class ItemEditSession {
         }
     }
 
+    // ── search filter (used by chest type selector) ──
+
+    private String searchFilter = "";
+
+    /** Current search filter for the chest type selector. Empty = show all. */
+    public String getSearchFilter() { return searchFilter; }
+    public void setSearchFilter(String v) { searchFilter = v == null ? "" : v; }
+
     public void clearAll() { items.clear(); chances.clear(); }
 
     // ── session state ──

@@ -163,11 +163,12 @@ command:
   spawnregion_done: "<green>Đã spawn {da_spawn}/{yeu_cau} rương loại <yellow>{loai}<green> trong region <yellow>{region}<green>!"
 
   # --- loottable ---
-  loottable_usage: "<red>Sử dụng: <yellow>/rlc loottable <italic>loại</italic>"
+  loottable_usage: "<red>Sử dụng: <yellow>/rlc loottable [reset] <italic>loại</italic>"
   loottable_header: "<dark_red>*-----<gold>Items: {loai}</gold><dark_red>*-----*"
   loottable_global_note: "<gray>Loại rương này dùng global items."
   loottable_line: "<white>- {vat_lieu} x{so_luong} <gray>(Tỷ lệ: {ty_le})"
   loottable_footer: "<dark_red>*-------------------------------*"
+  loottable_reset_done: "<green>Đã reset loot table cho '<yellow>{loai}<green>'!"
 
   # --- regions ---
   regions_empty: "<yellow>Không có region nào được cấu hình. Đang dùng chế độ global (dựa trên Largest/SmallestDinctance)."

@@ -69,11 +69,26 @@ public class TabComplete implements TabCompleter {
             }
             return Collections.emptyList();
         }
-        if (("chesttypeinfo".equals(sub) || "delchesttype".equals(sub) || "loottable".equals(sub) || "additem".equals(sub) || "addchest".equals(sub) || "addchesttype".equals(sub)) && args.length == 2) {
+        if (("chesttypeinfo".equals(sub) || "delchesttype".equals(sub) || "additem".equals(sub) || "addchest".equals(sub) || "addchesttype".equals(sub)) && args.length == 2) {
             // Suggest chest types
             List<String> types = new ArrayList<>();
             for (ChestType ct : ChestType.getAllChestTypes().values())
                 if (StringUtil.startsWithIgnoreCase(ct.getId(), args[1]))
+                    types.add(ct.getId());
+            return types;
+        }
+        if ("loottable".equals(sub) && args.length == 2) {
+            List<String> suggestions = new ArrayList<>();
+            suggestions.add("reset");
+            for (ChestType ct : ChestType.getAllChestTypes().values())
+                if (StringUtil.startsWithIgnoreCase(ct.getId(), args[1]))
+                    suggestions.add(ct.getId());
+            return suggestions;
+        }
+        if ("loottable".equals(sub) && args.length == 3 && args[1].equalsIgnoreCase("reset")) {
+            List<String> types = new ArrayList<>();
+            for (ChestType ct : ChestType.getAllChestTypes().values())
+                if (StringUtil.startsWithIgnoreCase(ct.getId(), args[2]))
                     types.add(ct.getId());
             return types;
         }

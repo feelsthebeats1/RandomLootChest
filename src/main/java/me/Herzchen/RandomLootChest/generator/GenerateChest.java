@@ -8,14 +8,13 @@ import me.Herzchen.RandomLootChest.region.RegionConfig;
 import me.Herzchen.RandomLootChest.util.FindAvaliableLocation;
 import me.Herzchen.RandomLootChest.util.MessageUtil;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.material.Chest;
-import org.bukkit.material.MaterialData;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Chest;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class GenerateChest {
    static BlockFace[] chestFaces = {BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
@@ -57,9 +56,14 @@ public class GenerateChest {
    }
 
    private void placeChestBlock(Location loc, ChestType ct) {
-      loc.getBlock().setType(ct.getMaterial());
+      Material mat = ct.getMaterial();
+      loc.getBlock().setType(mat);
       BlockState state = loc.getBlock().getState();
-      state.setData(new Chest(chestFaces[FindAvaliableLocation.getRandom(0, 3)]));
+      BlockData data = state.getBlockData();
+      if (data instanceof Chest chestData) {
+         chestData.setFacing(chestFaces[FindAvaliableLocation.getRandom(0, 3)]);
+         state.setBlockData(chestData);
+      }
       state.update();
    }
 
@@ -73,9 +77,8 @@ public class GenerateChest {
    }
 
    void saveChest(Location loc, ChestType ct) {
-      MaterialData md = loc.getBlock().getState().getData();
       Main.pl.RandomChests.put(loc, new RandomChestInfo(ct.getKillTime(),
-              String.format("%s:%d", md.getItemType(), md.getData()), ct.getId()));
+              ct.getMaterial().name(), ct.getId()));
       ct.playSpawnEffect(loc); ct.playSpawnSound(loc);
    }
 }
