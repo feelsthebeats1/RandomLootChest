@@ -412,18 +412,18 @@ public class ItemAdderGui implements Listener {
                 .disableAllInteractions()
                 .create();
 
-        // Decorations (NOT including slot 9 and 13; those are amount/chance displays)
+        // Decorations (NOT including slot 13 and 22; those are chance/amount displays)
         GuiItem pane = ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).asGuiItem(event -> event.setCancelled(true));
-        List<Integer> deco = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 17, 19, 20, 21, 22, 23, 24, 25, 26);
+        List<Integer> deco = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 19, 20, 21, 23, 24, 25, 26);
         gui.setItem(deco, pane);
-
-        // Amount display (slot 9) — clickable to edit via chat
-        GuiItem amountDisplay = buildAmountDisplay(session, id, item, player);
-        gui.setItem(9, amountDisplay);
 
         // Current chance display (slot 13)
         GuiItem currentDisplay = buildChanceDisplay(session, id, item, chanceValue, player);
         gui.setItem(13, currentDisplay);
+
+        // Amount display (slot 22) — clickable to edit via chat
+        GuiItem amountDisplay = buildAmountDisplay(session, id, item, player);
+        gui.setItem(22, amountDisplay);
 
         // Add buttons
         gui.setItem(10, addChanceButton(1, id, gui, player));
